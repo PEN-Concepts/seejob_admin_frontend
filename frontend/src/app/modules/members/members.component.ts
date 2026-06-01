@@ -74,12 +74,10 @@ export class MembersComponent implements OnInit {
     this.loading = true;
 
     const res: any = await this.api.get("admin_contactRequest/user_list");
-    console.log('all membeers',res)
-
-    this.demoRequest = res.data || [];  // ✅ FIX HERE
+    this.demoRequest = res.data || [];
 
   } catch (error) {
-    console.error("Error loading members:", error);
+    // error handled silently
   } finally {
     this.loading = false;
   }
@@ -90,7 +88,6 @@ export class MembersComponent implements OnInit {
       const res: any = await this.api.get("admin_contactRequest/rights");
       this.rights = Array.isArray(res) ? res : res?.data || [];
     } catch (error) {
-      console.error("Error loading rights:", error);
       this.rights = [];
       this.messageService.add({
         severity: "warn",
@@ -109,11 +106,9 @@ export class MembersComponent implements OnInit {
           value: subcategory.id,
         }));
       } else {
-        console.error("Unexpected subcategories response:", res);
         this.subcategories = [];
       }
     } catch (error) {
-      console.error("Error loading subcategories:", error);
       this.subcategories = [];
       this.messageService.add({
         severity: "warn",
@@ -139,8 +134,6 @@ async onStatusChange(member: any) {
     });
 
   } catch (error) {
-    console.error("Status update failed:", error);
-
     // ❗ revert toggle if API fails
     member.status = member.status === 1 ? 0 : 1;
 
@@ -163,7 +156,6 @@ async onStatusChange(member: any) {
         detail: "User deleted",
       });
     } catch (error) {
-      console.error("Delete user failed:", error);
       this.messageService.add({
         severity: "error",
         summary: "Error",
@@ -276,7 +268,6 @@ async onStatusChange(member: any) {
       this.editingMemberId = null;
       await this.loadMembers();
     } catch (error) {
-      console.error("Employee submit failed:", error);
       const apiMessage =
         (error as any)?.error?.message ||
         (error as any)?.message ||

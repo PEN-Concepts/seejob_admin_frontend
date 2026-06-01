@@ -6,12 +6,9 @@ import {
   TicketFilter,
   PaginationParams,
   PaginatedResponse,
-  User,
   Agent,
   TicketStatus,
   TicketPriority,
-  PriorityLevel,
-  TicketPriorityType,
   TicketStatusType,
 } from "../../models/ticket.models";
 
@@ -81,7 +78,6 @@ export class SupportComponent implements OnInit {
       this.setPriorityOptionsFromTickets(this.allTickets);
       this.applyLocalFilters();
     } catch (error) {
-      console.error("Error loading support tickets:", error);
       this.allTickets = [];
       this.activeTickets = [];
       this.inProgressTickets = [];
@@ -123,9 +119,7 @@ export class SupportComponent implements OnInit {
         label: agent.agent_name,
         value: agent.id,
       }));
-      console.log("Available agents loaded:", this.availableAgents);
     } catch (error) {
-      console.error("Error loading agents:", error);
       this.agentOptions = [];
     }
   }
@@ -134,7 +128,7 @@ export class SupportComponent implements OnInit {
     try {
       this.ticketStatuses = await this.ticketService.getAllStatuses();
     } catch (error) {
-      console.error("Error loading statuses:", error);
+      // error handled silently
     }
   }
 
@@ -147,7 +141,6 @@ export class SupportComponent implements OnInit {
         value: priority.id,
       }));
     } catch (error) {
-      console.error("Error loading priorities:", error);
       this.ticketPriorities = [];
       this.priorityOptions = [];
     }
@@ -167,7 +160,6 @@ export class SupportComponent implements OnInit {
   }
 
   createNewTicket() {
-    console.log('check uin')
     this.router.navigate(["/support/ticket/new"]);
   }
 
@@ -183,7 +175,7 @@ export class SupportComponent implements OnInit {
       // Reload the appropriate tab
       this.refreshCurrentTab();
     } catch (error) {
-      console.error("Error assigning ticket:", error);
+      // error handled silently
     }
   }
 
@@ -198,7 +190,7 @@ export class SupportComponent implements OnInit {
       // Reload all tabs as ticket might move between them
       this.loadSupportTicketList();
     } catch (error) {
-      console.error("Error updating ticket status:", error);
+      // error handled silently
     }
   }
 
@@ -240,7 +232,7 @@ export class SupportComponent implements OnInit {
           break;
       }
     } catch (error) {
-      console.error(`Error loading filtered ${type} tickets:`, error);
+      // error handled silently
     }
   }
 

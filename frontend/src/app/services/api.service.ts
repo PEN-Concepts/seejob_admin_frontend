@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  //base = 'http://localhost:8000/api/v1/';
-   base = 'https://userback.seejobrun.com/api/v1/';
+  base = environment.apiUrl;
   constructor(private http: HttpClient) {}
   get(path: string){
     const headers = this.authHeader();

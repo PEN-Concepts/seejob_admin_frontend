@@ -124,7 +124,6 @@ export class LeftMenuComponent implements OnInit {
         this.visibleMenuItems = [...this.menuItems];
       }
     } catch (error) {
-      console.error("Error applying menu permissions:", error);
       this.visibleMenuItems = [...this.menuItems];
     }
   }

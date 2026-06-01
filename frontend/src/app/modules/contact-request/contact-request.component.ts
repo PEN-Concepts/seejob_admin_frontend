@@ -1,7 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { ApiService } from "../../services/api.service";
-import { AuthService } from "../../services/auth.service";
-import { Router } from "@angular/router";
 
 @Component({
   selector: "app-contact-request",
@@ -12,9 +10,7 @@ export class ContactRequestComponent implements OnInit {
 demoRequest: any[] = [];
   loading = false;
   constructor(
-    private api: ApiService,
-    private auth: AuthService,
-    private router: Router
+    private api: ApiService
   ) {}
 
   async ngOnInit() {
@@ -28,7 +24,7 @@ demoRequest: any[] = [];
 
     this.demoRequest = res.data || [];  // ✅ FIX HERE
   } catch (error) {
-    console.error("Error loading members:", error);
+    // error handled silently
   } finally {
     this.loading = false;
   }

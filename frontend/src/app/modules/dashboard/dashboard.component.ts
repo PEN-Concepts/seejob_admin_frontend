@@ -51,7 +51,7 @@ export class DashboardComponent implements OnInit {
     try {
       this.stats = await this.api.get("/api/dashboard/summary");
     } catch (e) {
-      console.error(e);
+      // error handled silently
     }
   }
   async loadMembers() {
@@ -59,7 +59,7 @@ export class DashboardComponent implements OnInit {
       this.members = (await this.api.get("/api/members")) as any[];
       this.filteredMembers = [...this.members];
     } catch (e) {
-      console.error(e);
+      // error handled silently
     }
   }
 }

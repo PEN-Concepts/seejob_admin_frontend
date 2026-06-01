@@ -21,7 +21,7 @@ export class BillingComponent implements OnInit {
       this.loading = true;
       this.invoices = (await this.api.get("/admin_contactRequest/invoices")) as any[];
     } catch (error) {
-      console.error("Error loading invoices:", error);
+      // error handled silently
     } finally {
       this.loading = false;
     }

@@ -67,3 +67,7 @@ jest-coverage/
 # Database files
 *.sqlite
 *.db
+
+# Claude Code
+.claude
+.qodo

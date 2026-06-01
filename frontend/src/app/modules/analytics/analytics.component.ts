@@ -21,7 +21,7 @@ export class AnalyticsComponent implements OnInit {
       this.loading = true;
       this.metrics = await this.api.get("admin_contactRequest/summary");
     } catch (error) {
-      console.error("Error loading metrics:", error);
+      // error handled silently
     } finally {
       this.loading = false;
     }

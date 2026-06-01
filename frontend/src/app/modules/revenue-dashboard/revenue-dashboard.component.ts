@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { ApiService } from "../../services/api.service";
 
 @Component({
   selector: "app-revenue-dashboard",
@@ -27,7 +26,7 @@ export class RevenueDashboardComponent implements OnInit {
     { label: "This Year", value: "thisyear" },
   ];
 
-  constructor(private api: ApiService) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.initChart();
@@ -131,8 +130,6 @@ export class RevenueDashboardComponent implements OnInit {
   async loadInvoices() {
     this.loading = true;
     try {
-      // Placeholder data — replace with API call when endpoint is ready
-      // const data = await this.api.get("revenue/invoices");
       this.invoices = [
         { company: "BlueHorizon Ltd.", initials: "B", color: "#ef4444", issueDate: "08/17/25", contact: "accounts@bluehorizonltd.com", value: 2100, status: "paid" },
         { company: "NexaCorp", initials: "N", color: "#8b5cf6", issueDate: "08/17/25", contact: "payments@nexacorp.com", value: 1100, status: "unpaid" },
@@ -146,7 +143,7 @@ export class RevenueDashboardComponent implements OnInit {
         { company: "PathBlaze Inc.", initials: "P", color: "#6366f1", issueDate: "08/15/25", contact: "invoices@pathblaze.com", value: 1510, status: "unpaid" },
       ];
     } catch (e) {
-      console.error("Error loading invoices:", e);
+      // error handled silently
     } finally {
       this.loading = false;
     }

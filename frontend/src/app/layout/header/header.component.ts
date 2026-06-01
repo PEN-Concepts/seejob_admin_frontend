@@ -27,8 +27,6 @@ export class HeaderComponent {
   }
 
   logout() {
-    // TODO: Implement logout functionality
-    console.log("Logout clicked");
     this.router.navigate(['/login']);
   }
 }

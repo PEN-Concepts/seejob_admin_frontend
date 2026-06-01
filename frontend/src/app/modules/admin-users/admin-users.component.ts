@@ -1,8 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ApiService } from "../../services/api.service";
-import { AuthService } from "../../services/auth.service";
-import { Router } from "@angular/router";
 import { MessageService } from "primeng/api";
 
 interface AdminUser {
@@ -46,8 +44,6 @@ export class AdminUsersComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private auth: AuthService,
-    private router: Router,
     private messageService: MessageService,
     private fb: FormBuilder
   ) {
@@ -72,7 +68,6 @@ export class AdminUsersComponent implements OnInit {
       const res: any = await this.api.get("admin_contactRequest/admin_user_list");
       this.adminUsers = Array.isArray(res?.data) ? res.data : [];
     } catch (error) {
-      console.error("Error loading admin users:", error);
       this.adminUsers = [];
       this.messageService.add({
         severity: "error",
@@ -116,7 +111,6 @@ export class AdminUsersComponent implements OnInit {
       const res: any = await this.api.get("admin_contactRequest/rights");
       this.rights = Array.isArray(res) ? res : res?.data || [];
     } catch (error) {
-      console.error("Error loading rights:", error);
       this.rights = [];
       this.messageService.add({
         severity: "warn",
@@ -135,11 +129,9 @@ export class AdminUsersComponent implements OnInit {
           value: subcategory.id,
         }));
       } else {
-        console.error("Unexpected subcategories response:", res);
         this.subcategories = [];
       }
     } catch (error) {
-      console.error("Error loading subcategories:", error);
       this.subcategories = [];
       this.messageService.add({
         severity: "warn",
@@ -253,7 +245,6 @@ export class AdminUsersComponent implements OnInit {
       this.editingMemberId = null;
       await this.loadAdminUsers();
     } catch (error) {
-      console.error("Employee submit failed:", error);
       const apiMessage =
         (error as any)?.error?.message ||
         (error as any)?.message ||

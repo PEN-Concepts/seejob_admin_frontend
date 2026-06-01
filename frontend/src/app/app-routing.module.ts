@@ -28,7 +28,6 @@ const routes: Routes = [
   { path: "demo-request", component: DemoRequestComponent },
   { path: "revenue-dashboard", component: RevenueDashboardComponent },
   { path: "admin-users", component: AdminUsersComponent },
-  { path: "adnin-users", redirectTo: "admin-users", pathMatch: "full" },
 ];
 
 @NgModule({

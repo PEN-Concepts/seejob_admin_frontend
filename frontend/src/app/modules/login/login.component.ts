@@ -59,7 +59,6 @@ export class LoginComponent {
 
       this.errorMessage = res?.message || "Unable to send OTP";
     } catch (error) {
-      console.error("Login OTP request failed:", error);
       this.errorMessage = "Unable to send OTP";
     } finally {
       this.loading = false;
@@ -88,7 +87,6 @@ export class LoginComponent {
 
       this.errorMessage = "Invalid or expired OTP.";
     } catch (error: any) {
-      console.error("Login OTP verify failed:", error);
       this.errorMessage =
         error?.error?.message || error?.message || "Invalid or expired OTP.";
     } finally {

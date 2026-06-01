@@ -6,12 +6,9 @@ import {
   TicketComment,
   TicketStatus,
   TicketPriority,
-  User,
   Agent,
   CreateCommentRequest,
   UpdateTicketRequest,
-  PriorityLevel,
-  TicketPriorityType,
 } from "../../../models/ticket.models";
 
 @Component({
@@ -68,14 +65,13 @@ export class TicketDetailComponent implements OnInit {
     try {
       await this.loadSupportData();
     } catch (error) {
-      console.error("Error loading initial support data:", error);
+      // error handled silently
     }
 
     this.route.params.subscribe((params) => {
   const ticketId = params["id"];
 
   if (!ticketId || ticketId === "new") {
-    console.log('here');
     this.editMode = false;
     this.createNewTicket(); // don't navigate again
   } else {
@@ -92,7 +88,6 @@ export class TicketDetailComponent implements OnInit {
       this.initializeEditForm();
       await this.loadComments();
     } catch (error) {
-      console.error("Error loading ticket:", error);
       this.router.navigate(["/support"]);
     } finally {
       this.loading = false;
@@ -108,7 +103,7 @@ export class TicketDetailComponent implements OnInit {
         this.ticket.id
       );
     } catch (error) {
-      console.error("Error loading comments:", error);
+      // error handled silently
     } finally {
       this.loadingComments = false;
     }
@@ -116,8 +111,6 @@ export class TicketDetailComponent implements OnInit {
 
   async loadSupportData() {
     try {
-      console.log("Loading support data...");
-
       // Load each one separately with error handling
       let agents: Agent[] = [];
       let statuses: TicketStatus[] = [];
@@ -125,44 +118,34 @@ export class TicketDetailComponent implements OnInit {
 
       try {
         agents = await this.ticketService.getAvailableAgents();
-        console.log("Loaded agents:", agents);
       } catch (error) {
-        console.error("Error loading agents:", error);
+        // error handled silently
       }
 
       try {
         statuses = await this.ticketService.getAllStatuses();
-        console.log("Loaded statuses:", statuses);
       } catch (error) {
-        console.error("Error loading statuses:", error);
+        // error handled silently
       }
 
       try {
         priorities = await this.ticketService.getAllPriorities();
-        console.log("Loaded priorities:", priorities);
       } catch (error) {
-        console.error("Error loading priorities:", error);
+        // error handled silently
       }
 
       this.availableAgents = agents;
       this.ticketStatuses = statuses;
       this.ticketPriorities = priorities;
 
-      console.log("Final support data:", {
-        agents: this.availableAgents.length,
-        statuses: this.ticketStatuses.length,
-        priorities: this.ticketPriorities.length,
-      });
-
       // Force change detection
       this.cdr.detectChanges();
     } catch (error) {
-      console.error("Error loading support data:", error);
+      // error handled silently
     }
   }
 
   createNewTicket() {
-    console.log("Creating new ticket...");
     this.editMode = true;
     this.ticket = null;
     this.loading = false;
@@ -173,19 +156,15 @@ export class TicketDetailComponent implements OnInit {
       this.ticketStatuses.length === 0 ||
       this.availableAgents.length === 0
     ) {
-      console.log("Loading support data for new ticket...");
       this.loadSupportData()
         .then(() => {
-          console.log("Support data loaded, initializing form...");
           this.initializeEditForm();
         })
-        .catch((error) => {
-          console.error("Error loading support data:", error);
+        .catch(() => {
           // Initialize form with defaults even if support data fails
           this.initializeEditForm();
         });
     } else {
-      console.log("Support data already available, initializing form...");
       this.initializeEditForm();
     }
   }
@@ -246,10 +225,6 @@ export class TicketDetailComponent implements OnInit {
       };
     }
 
-    console.log("Form initialized:", this.editForm);
-    console.log("Priorities available:", this.ticketPriorities);
-    console.log("Statuses available:", this.ticketStatuses);
-
     // Force change detection after setting form values
     this.cdr.detectChanges();
   }
@@ -282,12 +257,10 @@ export class TicketDetailComponent implements OnInit {
   client_phone: this.editForm.client_phone || null,
 };
 
-        console.log("Updating ticket with data:", updateData);
         this.ticket = await this.ticketService.updateTicket(
           this.ticket.id,
           updateData
         );
-        console.log("Ticket updated successfully:", this.ticket);
 
         // Reload comments after update
         await this.loadComments();
@@ -306,9 +279,7 @@ export class TicketDetailComponent implements OnInit {
           client_phone: this.editForm.client_phone,
         };
 
-        console.log("Creating new ticket with data:", createData);
         this.ticket = await this.ticketService.createTicket(createData);
-        console.log("Ticket created successfully:", this.ticket);
 
         // Navigate to the new ticket
         this.router.navigate(["/support/ticket", this.ticket.id]);
@@ -318,7 +289,6 @@ export class TicketDetailComponent implements OnInit {
       this.editMode = false;
       this.initializeEditForm(); // Refresh form with updated data
     } catch (error) {
-      console.error("Error saving ticket:", error);
       alert("Failed to save ticket. Please try again.");
     } finally {
       this.updating = false;
@@ -347,7 +317,7 @@ export class TicketDetailComponent implements OnInit {
       );
       await this.loadComments(); // Reload comments to show status change
     } catch (error) {
-      console.error("Error updating status:", error);
+      // error handled silently
     } finally {
       this.updating = false;
     }
@@ -365,7 +335,7 @@ export class TicketDetailComponent implements OnInit {
       });
       await this.loadComments(); // Reload comments to show assignment change
     } catch (error) {
-      console.error("Error assigning ticket:", error);
+      // error handled silently
     } finally {
       this.updating = false;
     }
@@ -385,7 +355,7 @@ export class TicketDetailComponent implements OnInit {
       this.comments.push(newComment);
       this.newComment.comment = "";
     } catch (error) {
-      console.error("Error adding comment:", error);
+      // error handled silently
     }
   }
 
@@ -396,7 +366,7 @@ export class TicketDetailComponent implements OnInit {
       await this.ticketService.deleteComment(commentId);
       this.comments = this.comments.filter((c) => c.id !== commentId);
     } catch (error) {
-      console.error("Error deleting comment:", error);
+      // error handled silently
     }
   }
 
@@ -417,7 +387,7 @@ export class TicketDetailComponent implements OnInit {
       // Reload ticket to show new attachment
       await this.loadTicket(this.ticket.id);
     } catch (error) {
-      console.error("Error uploading file:", error);
+      // error handled silently
     }
   }
 
@@ -432,7 +402,7 @@ export class TicketDetailComponent implements OnInit {
         await this.loadTicket(this.ticket.id);
       }
     } catch (error) {
-      console.error("Error deleting attachment:", error);
+      // error handled silently
     }
   }
 

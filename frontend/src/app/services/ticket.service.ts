@@ -320,7 +320,6 @@ export class TicketService {
       
       return transformedStatuses;
     } catch (error) {
-      console.warn('Status API not available, using fallback data:', error);
       // Fallback statuses
       return [
         { id: 1, name: 'Active', color: '#f39c12', description: 'Active status' },
@@ -357,7 +356,6 @@ export class TicketService {
       
       return transformedPriorities;
     } catch (error) {
-      console.warn('Priority API not available, using fallback data:', error);
       const fallbackPriorities = [
         { id: 1, name: 'Low', level: 1, color: '#27ae60', description: 'Low priority' },
         { id: 2, name: 'Medium', level: 2, color: '#f39c12', description: 'Medium priority' },
@@ -480,7 +478,6 @@ export class TicketService {
       
       return transformedAgents;
     } catch (error) {
-      console.warn('Agents API not available, using fallback data:', error);
       return [
         { 
           id: 1, 
@@ -595,7 +592,6 @@ export class TicketService {
 
       return defaultCounts;
     } catch (error) {
-      console.error('Error loading ticket counts:', error);
       return {
         active: 0,
         inProgress: 0,
