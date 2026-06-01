@@ -1,0 +1,131 @@
+<div class="revenue-dashboard">
+  <div class="page-header">
+    <div class="header-left">
+      <h2>Revenue Dashboard</h2>
+      <span class="header-subtitle">Track your financial performance</span>
+    </div>
+    <div class="header-right">
+      <p-dropdown
+        [options]="periodOptions"
+        [(ngModel)]="selectedPeriod"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="false"
+        styleClass="period-dropdown"
+      ></p-dropdown>
+    </div>
+  </div>
+
+  <div class="grid mb-2">
+    <div
+      class="col-12 md:col-6 lg:col-3"
+      *ngFor="let stat of stats; let i = index"
+    >
+      <div class="stat-card" [attr.data-index]="i">
+        <div class="stat-card-top">
+          <div class="stat-icon-wrap" [ngClass]="'icon-' + i">
+            <i [class]="stat.icon"></i>
+          </div>
+        </div>
+        <div class="card-title">{{ stat.title }}</div>
+        <div class="card-value">{{ stat.value }}</div>
+        <div
+          class="card-sub"
+          [ngClass]="{
+            'trend-up': stat.trend === 'up',
+            'trend-down': stat.trend === 'down',
+          }"
+        >
+          {{ stat.sub }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="col-12 md:col-6">
+      <p-card>
+        <div class="section-header">
+          <h3>Revenue & Costs</h3>
+          <span class="section-badge">Monthly</span>
+        </div>
+        <div class="chart-container">
+          <p-chart
+            type="line"
+            [data]="revenueChartData"
+            [options]="revenueChartOptions"
+            height="500px"
+          ></p-chart>
+        </div>
+      </p-card>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <p-card>
+        <div class="section-header">
+          <h3>Invoices</h3>
+          <span class="section-badge">Recent</span>
+        </div>
+        <div class="invoices-table">
+          <p-table
+            [value]="invoices"
+            [paginator]="true"
+            [rows]="7"
+            [showCurrentPageReport]="false"
+            styleClass="p-datatable-sm"
+            [loading]="loading"
+            responsiveLayout="scroll"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Company</th>
+                <th>Issue Date</th>
+                <th>Contact</th>
+                <th>Status</th>
+                <th style="text-align: right">Value</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-invoice>
+              <tr>
+                <td>
+                  <div class="company-cell">
+                    <div
+                      class="company-avatar"
+                      [style.background]="invoice.color"
+                    >
+                      {{ invoice.initials }}
+                    </div>
+                    <span class="company-name">{{ invoice.company }}</span>
+                  </div>
+                </td>
+                <td class="text-muted">{{ invoice.issueDate }}</td>
+                <td class="text-muted contact-cell">{{ invoice.contact }}</td>
+                <td>
+                  <p-tag
+                    [value]="getStatusLabel(invoice.status)"
+                    [severity]="getStatusSeverity(invoice.status)"
+                    [rounded]="true"
+                  ></p-tag>
+                </td>
+                <td class="value-cell">${{ invoice.value | number }}</td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="5" class="empty-message">
+                  <div class="empty-state">
+                    <i class="pi pi-inbox empty-icon"></i>
+                    <h4>No invoices found</h4>
+                    <p>Invoice data will appear here once available.</p>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </p-card>
+    </div>
+  </div>
+</div>

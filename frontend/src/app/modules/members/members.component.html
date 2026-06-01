@@ -1,0 +1,209 @@
+<p-toast></p-toast>
+<div class="members-page">
+  <h2>Members</h2>
+
+  <div class="members-search">
+    <button
+      pButton
+      type="button"
+      label="Add Employee"
+      icon="pi pi-plus"
+      class="p-button-primary add-employee-btn"
+      (click)="openEmployeeDialog(false)"
+    ></button>
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input
+        pInputText
+        type="text"
+        (input)="onGlobalFilter(membersTable, $event)"
+        placeholder="Search members..."
+      />
+    </span>
+  </div>
+
+ <p-table
+  #membersTable
+  [value]="demoRequest"
+  [paginator]="true"
+  [rows]="10"
+  [loading]="loading"
+  [globalFilterFields]="globalFilterFields"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Mobile</th>
+      <th>Subscription</th>
+      <th>Package</th>
+      <th>Amount</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-member>
+    <tr>
+      <td>{{ member.id }}</td>
+      <td>{{ member.name }}</td>
+      <td>{{ member.email }}</td>
+      <td>{{ member.mobile }}</td>
+      <td>{{ member.subscription_status }}</td>
+      <td>{{ member.package_name }}</td>
+      <td>{{ member.amount | number : "1.2-2" }}</td>
+
+      <td>
+        <p-inputSwitch
+          [(ngModel)]="member.status"
+          [trueValue]="1"
+          [falseValue]="0"
+          (onChange)="onStatusChange(member)"
+        >
+        </p-inputSwitch>
+      </td>
+      <td class="actions-cell">
+        <!-- <button
+          type="button"
+          pButton
+          icon="pi pi-pencil"
+          class="p-button-text action-btn"
+          (click)="openEmployeeDialog(true, member)"
+          [attr.aria-label]="'Edit ' + (member.name || member.email)"
+        ></button> -->
+        <button
+          type="button"
+          pButton
+          icon="pi pi-trash"
+          class="p-button-danger p-button-text action-btn"
+          (click)="deleteMember(member)"
+          [attr.aria-label]="'Delete ' + (member.name || member.email)"
+        ></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+</div>
+
+<p-dialog
+  [header]="task_editmode ? 'Edit Employee' : 'Add Employee'"
+  [(visible)]="visibleEmpDialog"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  class="info-window"
+>
+  <div class="pt-4">
+    <form [formGroup]="empForm">
+      <div class="grid p-fluid">
+        <div class="col-12">
+          <input
+            type="text"
+            formControlName="name"
+            pInputText
+            placeholder="Name"
+            class="readonly-field"
+            [readonly]="task_editmode"
+          />
+        </div>
+
+        <div class="col-12">
+          <input
+            type="email"
+            formControlName="email"
+            pInputText
+            placeholder="Email"
+            class="readonly-field"
+            [readonly]="task_editmode"
+          />
+        </div>
+        <div class="col-12">
+          <div class="relative">
+            <input
+              pInputText
+              type="tel"
+              class="pl-7"
+              formControlName="phoneNumber"
+              placeholder="(555) 555-5555"
+              pattern="^\(\d{3}\) \d{3}-\d{4}$"
+              maxlength="14"
+              inputmode="numeric"
+              (input)="formatPhoneNumber($event)"
+            />
+            <img src="assets/images/us-flag.png" class="input-flag" />
+          </div>
+        </div>
+        <div class="col-12">
+          <p-dropdown
+            [options]="subcategories"
+            formControlName="subcategory"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Designations"
+            appendTo="body"
+          ></p-dropdown>
+        </div>
+        <div class="col-12">
+          <p-dropdown
+            [options]="employment_type"
+            formControlName="employment_type"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select Employment Type"
+            appendTo="body"
+          ></p-dropdown>
+        </div>
+
+        <div class="col-12">
+          <input
+            type="number"
+            formControlName="rate"
+            pInputText
+            placeholder="Enter Rate"
+            min="0"
+          />
+        </div>
+
+        <div class="col-12">
+          <p-multiSelect
+            [options]="leavesList"
+            formControlName="leave_ids"
+            optionLabel="leave_type"
+            optionValue="id"
+            placeholder="Assign Leave Types"
+            appendTo="body"
+          ></p-multiSelect>
+        </div>
+
+        <div class="col-12">
+          <label class="block mb-2">Assign Rights</label>
+          <div class="grid">
+            <div *ngFor="let right of rights" class="col-6">
+              <p-checkbox
+                formControlName="rights"
+                [value]="right.id"
+                [label]="right.display_name || right.name"
+                [inputId]="'right-' + right.id"
+              ></p-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid p-fluid">
+        <div class="col-12">
+          <button
+            pButton
+            type="button"
+            [label]="!task_editmode ? 'Create' : 'Update'"
+            styleClass="p-button-primary"
+            [disabled]="!task_editmode ? !createPermission : !editPermission"
+            (click)="onempSubmit()"
+            class="px-6 py-3 mt-2 text-xl border-round"
+            style="background: #286faa"
+          ></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</p-dialog>

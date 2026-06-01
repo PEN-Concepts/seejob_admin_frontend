@@ -1,0 +1,51 @@
+.shell-container {
+  height: 100vh;
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+
+.left-sidebar {
+  height: 100vh;
+  flex-shrink: 0;
+  transition: width 0.3s ease;
+}
+
+.right-content {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  flex: 1;
+}
+
+.top-header {
+  height: 60px;
+  flex-shrink: 0;
+}
+
+.main-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #eff3f9;
+}
+/* Mobile: make left menu float over content only when expanded */
+@media (max-width: 768px) {
+  .shell-container {
+    position: relative;
+  }
+
+  .left-sidebar.menu-open {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1100;
+  }
+
+  .right-content {
+    flex: 1;
+  }
+}

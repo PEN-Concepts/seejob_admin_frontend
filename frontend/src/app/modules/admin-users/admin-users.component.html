@@ -1,0 +1,110 @@
+<p-toast></p-toast>
+
+<div class="members-page">
+  <h2>Admin Users</h2>
+
+  <div class="members-search">
+    <button pButton type="button" label="Create Users" icon="pi pi-plus" class="p-button-primary add-employee-btn"
+      (click)="openEmployeeDialog(false)"></button>
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input
+        pInputText
+        type="text"
+        (input)="membersTable.filterGlobal($any($event.target).value, 'contains')"
+        placeholder="Search admin users..."
+      />
+    </span>
+  </div>
+
+  <p-table
+    #membersTable
+    [value]="adminUsers"
+    [paginator]="true"
+    [rows]="10"
+    [loading]="loading"
+    [globalFilterFields]="[
+      'name',
+      'email',
+      'subcategory_name',
+      'category_name'
+    ]"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Category</th>
+        <th>Subcategory</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-user>
+      <tr>
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.category_name || user.category }}</td>
+        <td>{{ user.subcategory_name || user.subcategory }}</td>
+        <td class="actions-cell">
+          <button
+            type="button"
+            pButton
+            icon="pi pi-pencil"
+            class="p-button-text action-btn"
+            (click)="openEmployeeDialog(true, user)"
+            [attr.aria-label]="'Edit ' + (user.name || user.email)"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5" class="empty-message">No admin users found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+</div>
+
+<p-dialog [header]="task_editmode ? 'Edit Employee' : 'Add Employee'" [(visible)]="visibleEmpDialog" [modal]="true"
+  [style]="{ width: '600px' }" class="info-window">
+  <div class="pt-4">
+    <form [formGroup]="empForm">
+      <div class="grid p-fluid">
+        <div class="col-12">
+          <input type="text" formControlName="name" pInputText placeholder="Name" class="readonly-field"
+            />
+        </div>
+
+        <div class="col-12">
+          <input type="email" formControlName="email" pInputText placeholder="Email" class="readonly-field"
+            />
+        </div>
+        <div class="col-12">
+          <p-dropdown [options]="subcategories" formControlName="subcategory" optionLabel="label" optionValue="value"
+            placeholder="Designations" appendTo="body"></p-dropdown>
+        </div>
+
+        <div class="col-12">
+          <label class="block mb-2">Assign Rights</label>
+          <div class="grid">
+            <div *ngFor="let right of rights" class="col-6">
+              <p-checkbox formControlName="rights" [value]="right.id" [label]="right.display_name || right.name"
+                [inputId]="'right-' + right.id"></p-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid p-fluid">
+        <div class="col-12">
+          <button pButton type="button" [label]="!task_editmode ? 'Create' : 'Update'" styleClass="p-button-primary"
+            [loading]="saving" [disabled]="saving || (!task_editmode ? !createPermission : !editPermission)" (click)="onempSubmit()"
+            class="px-6 py-3 mt-2 text-xl border-round" style="background: #286faa"></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</p-dialog>

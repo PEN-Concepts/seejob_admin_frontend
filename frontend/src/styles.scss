@@ -1,0 +1,22 @@
+/* src/styles.scss */
+@import "styles/custom.scss";
+@import "styles/theme/theme.css";
+@import "styles/auth/login-register.scss";
+@import "styles/layout/layout.scss";
+
+/* Primary Color Configuration */
+:root {
+  --primary-color: #276ca6;
+  --primary-color-text: #ffffff;
+  --primary-color-hover: #1e5a8a;
+  --primary-color-focus: rgba(39, 108, 166, 0.2);
+}
+
+/* Global styles to prevent body scrolling */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}

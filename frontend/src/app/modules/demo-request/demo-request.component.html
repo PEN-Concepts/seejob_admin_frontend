@@ -1,0 +1,43 @@
+<div class="members-page">
+  <h2>Demo Request</h2>
+
+  <div class="members-search">
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input
+        pInputText
+        type="text"
+        (input)="membersTable.filterGlobal($event.target.value, 'contains')"
+        placeholder="Search Demo Request..."
+      />
+    </span>
+  </div>
+
+ <p-table
+ #membersTable
+  [value]="demoRequest"
+  [paginator]="true"
+  [rows]="10"
+  [loading]="loading"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Mobile</th>
+      <th>Message</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-member>
+    <tr>
+      <td>{{ member.id }}</td>
+      <td>{{ member.firstName }} {{ member.lastName }}</td>
+      <td>{{ member.email }}</td>
+      <td>{{ member.phone }}</td>
+      <td>{{ member.message }}</td>
+    </tr>
+  </ng-template>
+</p-table>
+</div>

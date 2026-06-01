@@ -1,0 +1,394 @@
+.dashboard-wrap {
+  padding: 24px;
+}
+.dash-top .search-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px; /* space between search and stats */
+  width: 100%;
+}
+
+/* PrimeNG Search Input Styling */
+.search-input {
+  flex: 1;
+  margin-right: 16px;
+  padding: 12px 18px;
+  border-radius: 24px;
+  border: 1px solid #e6eef6;
+  background: #f6fbff;
+  font-size: 14px;
+}
+
+.search-input:focus {
+  outline: 0 none;
+  outline-offset: 0;
+  box-shadow: 0 0 0 0.2rem var(--primary-color-focus);
+  border-color: var(--primary-color);
+}
+
+.actions {
+  flex-shrink: 0;
+}
+
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px; /* space between stats and members card */
+}
+
+.stat-card {
+  background: #ffffff;
+  padding: 20px 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border-color: #e2e8f0;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), #60a5fa);
+}
+
+.stat-card .card-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+  margin-top: 0;
+}
+
+.stat-card .card-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 12px;
+  margin-top: 0;
+  line-height: 1;
+}
+
+.stat-card .card-sub {
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Removed decorative circle before subtitle */
+.stat-card .card-sub::before {
+  content: none;
+}
+
+/* Positive trend */
+.stat-card .card-sub:has-text("▲") {
+  color: #059669;
+}
+
+.stat-card .card-sub:has-text("▲")::before {
+  background: #10b981;
+}
+
+/* Negative trend */
+.stat-card .card-sub:has-text("▼") {
+  color: #dc2626;
+}
+
+.stat-card .card-sub:has-text("▼")::before {
+  background: #ef4444;
+}
+
+/* Default positive styling for all cards */
+.stat-card:nth-child(1) .card-sub {
+  color: #059669;
+}
+
+.stat-card:nth-child(1) .card-sub::before {
+  background: #10b981;
+}
+
+.stat-card:nth-child(2) .card-sub {
+  color: #059669;
+}
+
+.stat-card:nth-child(2) .card-sub::before {
+  background: #10b981;
+}
+
+.stat-card:nth-child(3) .card-sub {
+  color: #dc2626;
+}
+
+.stat-card:nth-child(3) .card-sub::before {
+  background: #ef4444;
+}
+
+.stat-card:nth-child(4) .card-sub {
+  color: #059669;
+}
+
+.stat-card:nth-child(4) .card-sub::before {
+  background: #10b981;
+}
+
+.members-section {
+  background: transparent;
+  margin-top: 4px;
+}
+.members-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.members-header h3 {
+  margin: 0;
+}
+.filters {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Rounded contractor dropdown */
+.filters ::ng-deep .contractor-dropdown.p-dropdown {
+  border-radius: 20px;
+}
+
+.filters ::ng-deep .contractor-dropdown .p-dropdown-label,
+.filters ::ng-deep .contractor-dropdown .p-dropdown-trigger {
+  border-radius: 20px;
+}
+
+/* PrimeNG Filter Buttons Styling */
+.filters ::ng-deep .filter-button .p-button {
+  background: #f1f5f9;
+  border: 1px solid #f1f5f9;
+  color: #6b7280;
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  height: 36px;
+  transition: all 0.2s ease;
+}
+
+.filters ::ng-deep .filter-button .p-button:hover {
+  background: #e2e8f0;
+  border-color: #e2e8f0;
+  color: #4a5568;
+}
+
+/* Active filter button (warning severity) */
+.filters ::ng-deep .filter-button .p-button.p-button-warning {
+  background: #fbbf24;
+  border-color: #fbbf24;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.filters ::ng-deep .filter-button .p-button.p-button-warning:hover {
+  background: #f59e0b;
+  border-color: #f59e0b;
+}
+
+.members-table .custom-datatable {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+}
+
+.members-table ::ng-deep .p-datatable .p-datatable-header {
+  background: var(--primary-color);
+  border: none;
+  padding: 0;
+}
+
+.members-table ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  background: var(--primary-color);
+  color: white;
+  font-weight: 600;
+  padding: 16px;
+  border: none;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.members-table ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  padding: 18px 16px;
+  border-bottom: 1px solid #f8fafc;
+  vertical-align: middle;
+  border-left: none;
+  border-right: none;
+}
+
+.members-table ::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
+  background: #f8fafc;
+}
+
+.members-table ::ng-deep .p-paginator {
+  background: white;
+  border: none;
+  padding: 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* Member cell styling */
+.member-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #e6f0fb;
+  color: #1e7ac9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.member-info .name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.member-info .email {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* Status badges */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.status-badge.status-active {
+  background: #e8f8ef;
+  color: #0c8b3f;
+}
+
+.status-badge.status-inactive {
+  background: #ffecec;
+  color: #d9534f;
+}
+
+.status-badge.status-pending {
+  background: #fff4e6;
+  color: #ff9f1a;
+}
+
+/* Action buttons */
+.actions-cell {
+  text-align: center;
+}
+
+.actions-cell ::ng-deep .action-btn {
+  margin: 0 4px;
+}
+
+.actions-cell ::ng-deep .action-btn .p-button {
+  background: #eaf4fb;
+  border: none;
+  color: #4a90e2;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+}
+
+.actions-cell ::ng-deep .action-btn .p-button:hover {
+  background: #d1e7fd;
+}
+
+@media (max-width: 900px) {
+  .stat-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    padding: 20px;
+  }
+
+  .stat-card .card-value {
+    font-size: 32px;
+  }
+
+  .dash-top .search-row {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .search-input {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+
+  .actions {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .actions ::ng-deep .add-btn .p-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .cards {
+    gap: 12px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .stat-card .card-title {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .card-value {
+    font-size: 28px;
+  }
+
+  .stat-card .card-sub {
+    font-size: 12px;
+  }
+}

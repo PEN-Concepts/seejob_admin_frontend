@@ -1,0 +1,523 @@
+<div class="support-page">
+  <!-- Header Section -->
+  <div class="support-header">
+    <div class="header-content">
+      <h2>Support Tickets Management</h2>
+      <!-- <p-button
+        label="Create New Ticket"
+        icon="pi pi-plus"
+        styleClass="p-button-rounded"
+        (click)="createNewTicket()"
+      >
+      </p-button> -->
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <p-card class="stat-card active-card">
+        <div class="stat-content">
+          <div class="stat-number">{{ ticketCounts.active }}</div>
+          <div class="stat-label">Active Tickets</div>
+        </div>
+      </p-card>
+      <p-card class="stat-card progress-card">
+        <div class="stat-content">
+          <div class="stat-number">{{ ticketCounts.inProgress }}</div>
+          <div class="stat-label">In Progress</div>
+        </div>
+      </p-card>
+      <p-card class="stat-card completed-card">
+        <div class="stat-content">
+          <div class="stat-number">{{ ticketCounts.completed }}</div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </p-card>
+      <p-card class="stat-card total-card">
+        <div class="stat-content">
+          <div class="stat-number">{{ ticketCounts.total }}</div>
+          <div class="stat-label">Total Tickets</div>
+        </div>
+      </p-card>
+    </div>
+  </div>
+
+  <!-- Filters and Search Section -->
+  <div class="filters-section">
+    <div class="filter-row">
+      <div class="search-box">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            placeholder="Search tickets..."
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="applyFilters()"
+          />
+        </span>
+      </div>
+      <div class="filter-controls">
+        <p-dropdown
+          [options]="priorityOptions"
+          [(ngModel)]="selectedPriority"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="All Priorities"
+          [showClear]="true"
+        >
+        </p-dropdown>
+
+        <p-dropdown
+          [options]="agentOptions"
+          [(ngModel)]="selectedAgent"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="All Agents"
+          [showClear]="true"
+        >
+        </p-dropdown>
+
+        <p-button
+          label="Clear"
+          severity="secondary"
+          [outlined]="true"
+          (click)="clearFilters()"
+        >
+        </p-button>
+        <p-button label="Apply Filters" (click)="applyFilters()"> </p-button>
+
+        <div class="divider"></div>
+
+        <p-button
+          label="Refresh All"
+          icon="pi pi-refresh"
+          severity="info"
+          [outlined]="true"
+          (click)="refreshAllTabs()"
+          pTooltip="Refresh all ticket data"
+        >
+        </p-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <p-tabView [(activeIndex)]="activeTabIndex" (onChange)="onTabChange($event)">
+    <p-tabPanel [header]="'Active Tickets (' + ticketCounts.active + ')'">
+      <div class="tab-toolbar">
+        <p-button
+          label="Refresh"
+          icon="pi pi-refresh"
+          severity="secondary"
+          [outlined]="true"
+          (click)="loadActiveTickets()"
+          pTooltip="Refresh active tickets"
+        ></p-button>
+      </div>
+
+      <p-table
+        [value]="activeTickets"
+        [paginator]="true"
+        [rows]="10"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        styleClass="p-datatable-striped"
+        [loading]="loadingActive"
+        responsiveLayout="scroll"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="ticket_number">
+              Ticket # <p-sortIcon field="ticket_number"></p-sortIcon>
+            </th>
+            <th pSortableColumn="subject">
+              Subject <p-sortIcon field="subject"></p-sortIcon>
+            </th>
+            <th>Client Info</th>
+            <th pSortableColumn="priority_id">
+              Priority <p-sortIcon field="priority_id"></p-sortIcon>
+            </th>
+            <th pSortableColumn="created_at">
+              Created <p-sortIcon field="created_at"></p-sortIcon>
+            </th>
+            <th pSortableColumn="due_date">
+              Due Date <p-sortIcon field="due_date"></p-sortIcon>
+            </th>
+            <!-- <th>Assigned To</th>
+            <th pSortableColumn="updated_at">
+              Last Updated <p-sortIcon field="updated_at"></p-sortIcon>
+            </th>
+            <th>Actions</th> -->
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-ticket>
+          <tr>
+            <td>
+              <span class="ticket-number">#{{ ticket.ticket_number }}</span>
+            </td>
+            <td>
+              <div class="ticket-content">
+                <div
+                  class="ticket-subject"
+                  (click)="viewTicketDetail(ticket.id)"
+                >
+                  {{ ticket.subject }}
+                </div>
+                <div class="ticket-description" *ngIf="ticket.description">
+                  {{ truncateText(ticket.description, 100) }}
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="client-info">
+                <div class="client-name">{{ ticket.client_name || "N/A" }}</div>
+                <div class="client-email">
+                  {{ ticket.client_email || "N/A" }}
+                </div>
+              </div>
+            </td>
+            <td>
+              <p-tag
+                [value]="ticket.priority?.name || 'Unknown'"
+                [severity]="getPrioritySeverity(ticket.priority_id)"
+              >
+              </p-tag>
+            </td>
+            <td>{{ ticket.created_at | date : "dd MMM, yyyy" }}</td>
+            <!-- <td>
+              <span
+                *ngIf="ticket.due_date; else noDueDate"
+                [class.overdue]="isOverdue(ticket.due_date)"
+                [class.due-soon]="isDueSoon(ticket.due_date)"
+              >
+                {{ ticket.due_date | date : "dd MMM, yyyy" }}
+              </span>
+              <ng-template #noDueDate>
+                <span class="no-due-date">Not set</span>
+              </ng-template>
+            </td> -->
+            <!-- <td>
+              <span *ngIf="ticket.assigned_user; else unassigned">
+                {{ ticket.assigned_user.name }}
+              </span>
+              <ng-template #unassigned>
+                <p-dropdown
+                  [options]="agentOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Assign to..."
+                  (onChange)="quickAssignTicket(ticket.id, $event.value)"
+                  styleClass="compact-dropdown"
+                >
+                </p-dropdown>
+              </ng-template>
+            </td>
+            <td>{{ ticket.updated_at | date : "dd MMM, yyyy" }}</td>
+            <td>
+              <div class="action-buttons">
+                <p-button
+                  icon="pi pi-eye"
+                  [text]="true"
+                  size="small"
+                  pTooltip="View Details"
+                  (click)="viewTicketDetail(ticket.id)"
+                >
+                </p-button>
+                <p-button
+                  icon="pi pi-play"
+                  [text]="true"
+                  size="small"
+                  severity="success"
+                  pTooltip="Move to In Progress"
+                  (click)="quickStatusUpdate(ticket.id, 2)"
+                >
+                </p-button>
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  size="small"
+                  severity="secondary"
+                  pTooltip="Edit Ticket"
+                  (click)="editTicket(ticket.id)"
+                >
+                </p-button>
+              </div>
+            </td> -->
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="9" class="empty-message">
+              <div class="empty-state">
+                <i class="pi pi-ticket empty-icon"></i>
+                <h3>No active tickets found</h3>
+                <p>All active tickets will appear here.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+
+    <p-tabPanel [header]="'In Progress (' + ticketCounts.inProgress + ')'">
+      <div class="tab-toolbar">
+        <p-button
+          label="Refresh"
+          icon="pi pi-refresh"
+          severity="secondary"
+          [outlined]="true"
+          (click)="loadInProgressTickets()"
+          pTooltip="Refresh in-progress tickets"
+        ></p-button>
+      </div>
+      <p-table
+        [value]="inProgressTickets"
+        [paginator]="true"
+        [rows]="10"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        styleClass="p-datatable-striped"
+        [loading]="loadingInProgress"
+        responsiveLayout="scroll"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="ticket_number">
+              Ticket # <p-sortIcon field="ticket_number"></p-sortIcon>
+            </th>
+            <th pSortableColumn="subject">
+              Subject <p-sortIcon field="subject"></p-sortIcon>
+            </th>
+            <th>Client Info</th>
+            <th pSortableColumn="priority_id">
+              Priority <p-sortIcon field="priority_id"></p-sortIcon>
+            </th>
+            <th pSortableColumn="created_at">
+              Created <p-sortIcon field="created_at"></p-sortIcon>
+            </th>
+            <th pSortableColumn="due_date">
+              Due Date <p-sortIcon field="due_date"></p-sortIcon>
+            </th>
+            <th>Assigned To</th>
+            <th pSortableColumn="updated_at">
+              Last Updated <p-sortIcon field="updated_at"></p-sortIcon>
+            </th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-ticket>
+          <tr>
+            <td>
+              <span class="ticket-number">#{{ ticket.ticket_number }}</span>
+            </td>
+            <td>
+              <div class="ticket-content">
+                <div
+                  class="ticket-subject"
+                  (click)="viewTicketDetail(ticket.id)"
+                >
+                  {{ ticket.subject }}
+                </div>
+                <div class="ticket-description" *ngIf="ticket.description">
+                  {{ truncateText(ticket.description, 100) }}
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="client-info">
+                <div class="client-name">{{ ticket.client_name || "N/A" }}</div>
+                <div class="client-email">
+                  {{ ticket.client_email || "N/A" }}
+                </div>
+              </div>
+            </td>
+            <td>
+              <p-tag
+                [value]="ticket.priority?.name || 'Unknown'"
+                [severity]="getPrioritySeverity(ticket.priority_id)"
+              >
+              </p-tag>
+            </td>
+            <td>{{ ticket.created_at | date : "dd MMM, yyyy" }}</td>
+            <td>
+              <span
+                *ngIf="ticket.due_date; else noDueDate"
+                [class.overdue]="isOverdue(ticket.due_date)"
+                [class.due-soon]="isDueSoon(ticket.due_date)"
+              >
+                {{ ticket.due_date | date : "dd MMM, yyyy" }}
+              </span>
+              <ng-template #noDueDate>
+                <span class="no-due-date">Not set</span>
+              </ng-template>
+            </td>
+            <td>{{ ticket.assigned_user?.name || "Unassigned" }}</td>
+            <td>{{ ticket.updated_at | date : "dd MMM, yyyy" }}</td>
+            <td>
+              <div class="action-buttons">
+                <p-button
+                  icon="pi pi-eye"
+                  [text]="true"
+                  size="small"
+                  pTooltip="View Details"
+                  (click)="viewTicketDetail(ticket.id)"
+                >
+                </p-button>
+                <p-button
+                  icon="pi pi-check"
+                  [text]="true"
+                  size="small"
+                  severity="success"
+                  pTooltip="Mark as Completed"
+                  (click)="quickStatusUpdate(ticket.id, 3)"
+                >
+                </p-button>
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  size="small"
+                  severity="secondary"
+                  pTooltip="Edit Ticket"
+                  (click)="editTicket(ticket.id)"
+                >
+                </p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="9" class="empty-message">
+              <div class="empty-state">
+                <i class="pi pi-clock empty-icon"></i>
+                <h3>No tickets in progress</h3>
+                <p>Tickets being worked on will appear here.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+
+    <p-tabPanel [header]="'Completed (' + ticketCounts.completed + ')'">
+      <div class="tab-toolbar">
+        <p-button
+          label="Refresh"
+          icon="pi pi-refresh"
+          severity="secondary"
+          [outlined]="true"
+          (click)="loadCompletedTickets()"
+          pTooltip="Refresh completed tickets"
+        ></p-button>
+      </div>
+
+      <p-table
+        [value]="completedTickets"
+        [paginator]="true"
+        [rows]="10"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        styleClass="p-datatable-striped"
+        [loading]="loadingCompleted"
+        responsiveLayout="scroll"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="ticket_number">
+              Ticket # <p-sortIcon field="ticket_number"></p-sortIcon>
+            </th>
+            <th pSortableColumn="subject">
+              Subject <p-sortIcon field="subject"></p-sortIcon>
+            </th>
+            <th>Client Info</th>
+            <th pSortableColumn="priority_id">
+              Priority <p-sortIcon field="priority_id"></p-sortIcon>
+            </th>
+            <th pSortableColumn="created_at">
+              Created <p-sortIcon field="created_at"></p-sortIcon>
+            </th>
+            <th pSortableColumn="resolved_at">
+              Resolved <p-sortIcon field="resolved_at"></p-sortIcon>
+            </th>
+            <th>Assigned To</th>
+            <th>Resolution Time</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-ticket>
+          <tr>
+            <td>
+              <span class="ticket-number">#{{ ticket.ticket_number }}</span>
+            </td>
+            <td>
+              <div class="ticket-content">
+                <div
+                  class="ticket-subject"
+                  (click)="viewTicketDetail(ticket.id)"
+                >
+                  {{ ticket.subject }}
+                </div>
+                <div class="ticket-description" *ngIf="ticket.description">
+                  {{ truncateText(ticket.description, 100) }}
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="client-info">
+                <div class="client-name">{{ ticket.client_name || "N/A" }}</div>
+                <div class="client-email">
+                  {{ ticket.client_email || "N/A" }}
+                </div>
+              </div>
+            </td>
+            <td>
+              <p-tag
+                [value]="ticket.priority?.name || 'Unknown'"
+                [severity]="getPrioritySeverity(ticket.priority_id)"
+              >
+              </p-tag>
+            </td>
+            <td>{{ ticket.created_at | date : "dd MMM, yyyy" }}</td>
+            <td>{{ ticket.resolved_at | date : "dd MMM, yyyy" }}</td>
+            <td>{{ ticket.assigned_user?.name || "Unassigned" }}</td>
+            <td>
+              {{ getResolutionTime(ticket.created_at, ticket.resolved_at) }}
+            </td>
+            <td>
+              <div class="action-buttons">
+                <p-button
+                  icon="pi pi-eye"
+                  [text]="true"
+                  size="small"
+                  pTooltip="View Details"
+                  (click)="viewTicketDetail(ticket.id)"
+                >
+                </p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="9" class="empty-message">
+              <div class="empty-state">
+                <i class="pi pi-check-circle empty-icon"></i>
+                <h3>No completed tickets</h3>
+                <p>Resolved tickets will appear here.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+  </p-tabView>
+</div>

@@ -1,0 +1,175 @@
+<div
+  class="login-page"
+  [style.background]="
+    'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(assets/images/login-bg.jpg) center/cover no-repeat'
+  "
+>
+  <!-- <div class="login-card">
+    <div class="logo-section">
+      <img
+        src="assets/seeJobRun.png"
+        alt="See Job Run Logo"
+        class="logo"
+        style="max-width: 120px"
+      />
+    </div>
+
+    <div class="form-section">
+      <h2 class="welcome-text">Welcome Back</h2>
+      <p class="subtitle">Sign in to continue to See Job Run</p>
+
+      <form (ngSubmit)="login()" #loginForm="ngForm">
+        <div class="input-group">
+          <img src="assets/images/email.svg" alt="Email" class="input-icon" />
+          <input
+            name="email"
+            [(ngModel)]="email"
+            placeholder="ht@g.com"
+            required
+            class="input-field"
+          />
+        </div>
+
+        <div class="input-group">
+          <img
+            src="assets/images/eye.svg"
+            alt="Password"
+            class="input-icon"
+            style="opacity: 0.4"
+          />
+          <input
+            name="password"
+            [(ngModel)]="password"
+            [type]="showPassword ? 'text' : 'password'"
+            placeholder="••••••••"
+            required
+            class="input-field"
+          />
+          <img
+            src="assets/images/eye.svg"
+            alt="Show/Hide"
+            class="eye-icon"
+            (click)="togglePasswordVisibility()"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="signin-btn"
+          [disabled]="!email || !password"
+        >
+          Sign In
+        </button>
+      </form>
+    </div>
+
+    <div class="footer">
+      <p class="copyright">See Job Run 2026. All rights reserved.</p>
+    </div>
+  </div> -->
+
+  <!-- Sign In Screen -->
+  <div class="login-card" *ngIf="!showOtp">
+    <div class="logo-section">
+      <img
+        src="assets/seeJobRun.png"
+        alt="See Job Run Logo"
+        class="logo"
+        style="max-width: 120px"
+      />
+    </div>
+
+    <div class="form-section">
+      <h2 class="welcome-text">Welcome Back</h2>
+      <p class="subtitle">Sign in to continue to See Job Run</p>
+
+      <div class="input-group">
+        <img src="assets/images/email.svg" alt="Email" class="input-icon" />
+        <input
+          name="email"
+          type="email"
+          [(ngModel)]="email"
+          placeholder="ht@g.com"
+          class="input-field"
+          (keyup.enter)="requestOtp()"
+        />
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+      <div class="success-message" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <button
+        type="button"
+        class="signin-btn"
+        [disabled]="loading || !email.trim()"
+        (click)="requestOtp()"
+      >
+        {{ loading ? "Sending..." : "Send OTP" }}
+      </button>
+    </div>
+
+    <div class="footer">
+      <p class="copyright">See Job Run 2026. All rights reserved.</p>
+    </div>
+  </div>
+
+  <!-- OTP Screen -->
+  <div class="login-card" *ngIf="showOtp">
+    <div class="logo-section">
+      <img
+        src="assets/seeJobRun.png"
+        alt="See Job Run Logo"
+        class="logo"
+        style="max-width: 120px"
+      />
+    </div>
+
+    <div class="form-section">
+      <h2 class="welcome-text">Enter OTP</h2>
+      <p class="subtitle">We've sent a verification code to {{ email }}</p>
+
+      <div class="otp-inputs" (paste)="onOtpPaste($event)">
+        <input
+          #otpInput
+          *ngFor="let _ of otpDigits; let index = index; trackBy: trackByOtpIndex"
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="1"
+          class="otp-box"
+          [value]="otpDigits[index]"
+          [attr.autocomplete]="index === 0 ? 'one-time-code' : 'off'"
+          (input)="onOtpInput($event, index)"
+          (keydown)="onOtpKeydown($event, index)"
+        />
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+      <div class="success-message" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+      <button
+        type="button"
+        class="signin-btn"
+        [disabled]="loading || !isOtpComplete"
+        (click)="verifyOtp()"
+      >
+        {{ loading ? "Verifying..." : "Verify OTP" }}
+      </button>
+
+      <p class="resend-text">
+        Didn't receive the code?
+        <span class="resend-link" (click)="requestOtp()">Resend</span>
+      </p>
+      <p class="resend-text">
+        <span class="resend-link" (click)="backToEmail()">Change email</span>
+      </p>
+    </div>
+
+    <div class="footer">
+      <p class="copyright">See Job Run 2026. All rights reserved.</p>
+    </div>
+  </div>
+</div>

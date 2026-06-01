@@ -1,0 +1,21 @@
+<div class="shell-container flex">
+  <app-left-menu
+    *ngIf="showMenu"
+    class="left-sidebar"
+    [class.menu-open]="!isMenuCollapsed"
+    [isCollapsed]="isMenuCollapsed"
+    (closeMenu)="toggleMenuCollapse()"
+  >
+  </app-left-menu>
+  <div
+    class="right-content flex-1"
+    [class.with-menu]="showMenu"
+    [class.menu-collapsed]="isMenuCollapsed"
+  >
+    <app-header class="top-header" (toggleMenu)="toggleMenuCollapse()">
+    </app-header>
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

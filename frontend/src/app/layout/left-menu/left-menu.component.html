@@ -1,0 +1,48 @@
+<nav class="left-menu" [class.collapsed]="isCollapsed">
+  <div class="brand-section" *ngIf="!isCollapsed">
+    <div class="brand-logo">
+      <i class="pi pi-bolt text-primary"></i>
+    </div>
+    <div class="brand-text">SEE JOB RUN</div>
+    <button type="button" class="mobile-close" (click)="onCloseClick()">
+      <i class="pi pi-times"></i>
+    </button>
+  </div>
+
+  <div class="brand-icon" *ngIf="isCollapsed">
+    <i class="pi pi-bolt text-primary"></i>
+  </div>
+
+  <div class="menu-section">
+    <ul class="menu-list">
+      <li class="menu-item" *ngFor="let item of visibleMenuItems">
+        <div class="menu-item-wrapper">
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            class="menu-link flex align-items-center"
+          >
+            <i [class]="item.icon" class="menu-icon"></i>
+            <span class="menu-label" *ngIf="!isCollapsed">{{
+              item.label
+            }}</span>
+            <span class="menu-badge" *ngIf="item.badge && !isCollapsed">{{
+              item.badge
+            }}</span>
+          </a>
+
+          <!-- Positioned menu item for collapsed state -->
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            class="menu-item-popup"
+            *ngIf="isCollapsed"
+          >
+            <span class="popup-label">{{ item.label }}</span>
+            <span class="popup-badge" *ngIf="item.badge">{{ item.badge }}</span>
+          </a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>

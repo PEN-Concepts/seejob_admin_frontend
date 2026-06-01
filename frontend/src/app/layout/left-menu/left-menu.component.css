@@ -1,0 +1,218 @@
+.left-menu {
+  width: 220px;
+  background: #fff;
+  border-right: 1px solid #e6eef6;
+  height: 100vh;
+  padding: 0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
+  /* overflow: hidden; */
+  transition: width 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.left-menu.collapsed {
+  width: 60px;
+}
+
+/* Brand Section */
+.brand-section {
+  padding: 20px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+}
+
+.mobile-close {
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: none;
+  padding: 4px;
+}
+
+.mobile-close i {
+  font-size: 18px;
+  color: #64748b;
+}
+
+.brand-logo {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.brand-logo i {
+  font-size: 18px;
+}
+
+.brand-text {
+  font-weight: 800;
+  color: #276ca6;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.brand-icon {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.brand-icon i {
+  font-size: 20px;
+}
+
+/* Menu Section */
+.menu-section {
+  flex: 1;
+  padding: 16px 0;
+  /* overflow-y: auto; */
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item {
+  margin: 2px 8px;
+}
+
+.menu-item-wrapper {
+  position: relative;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  color: #64748b;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  gap: 12px;
+  min-height: 44px;
+}
+
+.menu-link:hover {
+  background-color: #f8fafc;
+  color: #276ca6;
+}
+
+.menu-link.active {
+  background-color: #e0f2fe;
+  color: #276ca6;
+  font-weight: 600;
+}
+
+.menu-icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.menu-label {
+  font-weight: 500;
+  font-size: 14px;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.menu-badge {
+  background: #ef4444;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Collapsed state adjustments */
+.left-menu.collapsed .menu-link {
+  justify-content: center;
+  padding: 12px;
+}
+
+.left-menu.collapsed .menu-icon {
+  font-size: 18px;
+}
+
+/* Positioned menu item popup for collapsed state */
+.menu-item-popup {
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 0;
+  background: #fff;
+  border: 1px solid #e6eef6;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 9999;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  min-width: 180px;
+  cursor: pointer;
+}
+
+/* Show popup on hover when collapsed */
+.left-menu.collapsed .menu-item-wrapper:hover .menu-item-popup {
+  opacity: 1;
+  visibility: visible;
+}
+
+.popup-icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  color: #64748b;
+}
+
+.popup-label {
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+  flex: 1;
+}
+
+.popup-badge {
+  background: #ef4444;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Show close icon only on mobile when menu is open */
+@media (max-width: 768px) {
+  :host-context(.menu-open) .mobile-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

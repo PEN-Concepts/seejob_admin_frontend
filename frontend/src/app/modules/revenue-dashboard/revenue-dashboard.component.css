@@ -1,0 +1,318 @@
+.revenue-dashboard {
+  padding: 0;
+}
+
+/* ── Page Header ── */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.header-left h2 {
+  margin: 0 0 4px 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.header-subtitle {
+  font-size: 13px;
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.header-right ::ng-deep .period-dropdown.p-dropdown {
+  border-radius: 20px;
+  min-width: 180px;
+}
+
+/* ── Stat Cards - Layout handled by PrimeFlex */
+
+.stat-card {
+  background: #ffffff;
+  padding: 20px 24px;
+  border-radius: 16px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 25px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border-color: #e2e8f0;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.stat-card[data-index="0"]::before {
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+}
+.stat-card[data-index="1"]::before {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+.stat-card[data-index="2"]::before {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+.stat-card[data-index="3"]::before {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.stat-card-top {
+  margin-bottom: 12px;
+}
+
+.stat-icon-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.stat-icon-wrap.icon-0 {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
+}
+.stat-icon-wrap.icon-1 {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+}
+.stat-icon-wrap.icon-2 {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+.stat-icon-wrap.icon-3 {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+}
+
+.stat-card .card-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  letter-spacing: 0.3px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.stat-card .card-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.stat-card .card-sub {
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-sub.trend-up {
+  color: #059669;
+}
+
+.card-sub.trend-down {
+  color: #dc2626;
+}
+
+/* ── PrimeFlex Grid - Chart and Table Cards */
+.grid ::ng-deep .p-card {
+  border-radius: 16px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f5f9;
+  height: 100%;
+}
+
+.grid ::ng-deep .p-card .p-card-body {
+  padding: 24px;
+  height: 100%;
+}
+
+.grid ::ng-deep .p-card .p-card-content {
+  padding: 0;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.section-badge {
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.chart-container {
+  width: 100%;
+  height: 500px;
+}
+
+/* ── Invoices Table ── */
+.invoices-table ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  background: #f8fafc;
+  color: #64748b;
+  font-weight: 600;
+  padding: 12px 16px;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.invoices-table ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f8fafc;
+  vertical-align: middle;
+  font-size: 13px;
+  border-left: none;
+  border-right: none;
+}
+
+.invoices-table ::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
+  background: #f8fafc;
+}
+
+.invoices-table ::ng-deep .p-paginator {
+  background: white;
+  border: none;
+  padding: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.company-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.company-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.company-name {
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.text-muted {
+  color: #94a3b8;
+}
+
+.contact-cell {
+  font-size: 12px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.value-cell {
+  text-align: right;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 14px;
+}
+
+/* Tag overrides */
+.invoices-table ::ng-deep .p-tag {
+  font-size: 11px;
+  padding: 4px 10px;
+}
+
+/* Empty state */
+.empty-message {
+  text-align: center;
+  padding: 48px 24px !important;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.empty-icon {
+  font-size: 40px;
+  color: #cbd5e1;
+}
+
+.empty-state h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .stat-card .card-value {
+    font-size: 28px;
+  }
+
+  .section-header h3 {
+    font-size: 14px;
+  }
+}

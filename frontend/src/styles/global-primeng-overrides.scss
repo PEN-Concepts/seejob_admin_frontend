@@ -1,0 +1,122 @@
+/* === PrimeNG Global Overrides === */
+
+/* Inputs, textareas, number inputs */
+input.p-inputtext,
+textarea.p-inputtextarea,
+.p-inputnumber input.p-inputtext,
+.p-spinner input {
+  height: 30px !important;
+  line-height: 30px !important;
+  font-size: 14px !important;
+  padding: 4px 8px !important;
+  border-radius: 5px !important;
+  width: 100% !important; /* Let input fill parent */
+  box-sizing: border-box;
+}
+
+/* === Dropdown === */
+.p-dropdown {
+  height: 30px !important;
+  min-height: 30px !important;
+  font-size: 12px !important;
+  border-radius: 5px !important;
+  padding: 1px !important;
+  margin-left: 2px;
+  width: 100% !important; /* Make dropdown width flexible */
+  box-sizing: border-box; /* Prevent overflow */
+}
+
+.p-dropdown-label {
+  padding: 0px 5px 5px 2px !important;
+  line-height: 30px !important;
+  font-size: 12px !important;
+  align-items: center;
+  box-sizing: border-box;
+  white-space: normal !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Clear icon */
+.p-dropdown .p-dropdown-clear {
+  width: 18px;
+  height: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px !important;
+}
+
+/* Trigger (arrow) */
+::ng-deep .p-dropdown .p-dropdown-trigger {
+  height: 30px !important;
+  line-height: 30px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dropdown panel */
+::ng-deep .p-dropdown-panel {
+  min-width: 100% !important; /* Match parent */
+  max-height: 150px !important;
+  font-size: 14px !important;
+  padding: 0 !important;
+  border-radius: 5px !important;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1) !important;
+  overflow-y: auto !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+
+/* Dropdown items */
+::ng-deep .p-dropdown-items .p-dropdown-item {
+  height: auto !important;
+  min-height: 28px !important;
+  line-height: 20px !important;
+  font-size: 13px !important;
+  padding: 4px 8px !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+
+/* === Calendar Input === */
+::ng-deep .p-calendar input.p-inputtext {
+  height: 30px !important;
+  line-height: 30px !important;
+  font-size: 14px !important;
+  padding: 4px 8px !important;
+  border-radius: 5px !important;
+  width: 100% !important; /* Flexible width */
+  box-sizing: border-box;
+}
+
+/* Calendar popup */
+::ng-deep .p-calendar .p-datepicker {
+  min-width: 250px !important;
+  max-height: 300px !important;
+  font-size: 14px !important;
+  padding: 4px !important;
+  overflow: auto !important;
+}
+
+/* Calendar table cells */
+::ng-deep .p-calendar .p-datepicker td,
+::ng-deep .p-calendar .p-datepicker th {
+  height: 28px !important;
+  line-height: 28px !important;
+  padding: 2px !important;
+  font-size: 12px !important;
+  white-space: normal !important;
+}
+
+/* Calendar icon */
+::ng-deep .p-calendar .p-datepicker-trigger {
+  height: 30px !important;
+  width: 30px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  background-color: #fff !important;
+  box-shadow: none !important;
+}

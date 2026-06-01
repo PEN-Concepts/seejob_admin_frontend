@@ -1,0 +1,59 @@
+<div class="billing-page">
+  <h2>Billing</h2>
+
+  <div class="billing-search">
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input
+        pInputText
+        type="text"
+        (input)="billingTable.filterGlobal($event.target.value, 'contains')"
+        placeholder="Search invoices..."
+      />
+    </span>
+  </div>
+
+  <p-table
+    #billingTable
+    [value]="invoices"
+    [paginator]="true"
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    styleClass="p-datatable-striped"
+    [loading]="loading"
+    responsiveLayout="scroll"
+    [globalFilterFields]="['id', 'amount']"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="id">
+          Invoice ID <p-sortIcon field="id"></p-sortIcon>
+        </th>
+        <th pSortableColumn="amount">
+          Amount <p-sortIcon field="amount"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-invoice>
+      <tr>
+        <td>#{{ invoice.id }}</td>
+        <td>${{ invoice.amount }}</td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="2" class="empty-message">
+          <div class="empty-state">
+            <i class="pi pi-file empty-icon"></i>
+            <h3>No invoices found</h3>
+            <p>Your billing history will appear here once you have invoices.</p>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

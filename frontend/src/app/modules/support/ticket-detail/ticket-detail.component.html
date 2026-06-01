@@ -1,0 +1,527 @@
+<div class="ticket-detail-page">
+  <!-- Modern Header -->
+  <div class="modern-header">
+    <div class="header-left">
+      <button class="back-button" (click)="goBack()">
+        <i class="pi pi-arrow-left"></i>
+        <span>Back to Support</span>
+      </button>
+    </div>
+
+    <div class="header-right" *ngIf="ticket && !editMode">
+      <button class="action-button primary" (click)="editMode = true">
+        <i class="pi pi-pencil"></i>
+        Edit Ticket
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <p>Loading ticket details...</p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" *ngIf="!loading">
+    <!-- Edit Mode -->
+    <div class="edit-mode" *ngIf="editMode">
+      <div class="edit-container">
+        <div class="edit-header">
+          <h2 *ngIf="ticket">Edit Ticket #{{ ticket.ticket_number }}</h2>
+          <h2 *ngIf="!ticket">Create New Ticket</h2>
+        </div>
+
+        <form (ngSubmit)="saveTicket()" class="ticket-form">
+          <div class="form-sections">
+            <!-- Main Information -->
+            <div class="form-section">
+              <h3>Ticket Information</h3>
+              <div class="form-grid">
+                <div class="form-group full-width">
+                  <label for="subject">Subject *</label>
+                  <input
+                    id="subject"
+                    type="text"
+                    [(ngModel)]="editForm.subject"
+                    name="subject"
+                    class="form-input"
+                    required
+                    placeholder="Enter ticket subject"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="priority">Priority</label>
+                  <select
+                    id="priority"
+                    [(ngModel)]="editForm.priority_id"
+                    name="priority_id"
+                    class="form-select"
+                  >
+                    <option value="">Select Priority...</option>
+                    <option
+                      *ngFor="let priority of ticketPriorities"
+                      [value]="priority.id"
+                    >
+                      {{ priority.name }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="status_id">Status</label>
+                  <select
+                    id="status_id"
+                    [(ngModel)]="editForm.status_id"
+                    name="status_id"
+                    class="form-select"
+                  >
+                    <option
+                      *ngFor="let status of ticketStatuses"
+                      [value]="status.id"
+                    >
+                      {{ status.name }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="assigned_to">Assign To</label>
+                  <select
+                    id="assigned_to"
+                    [(ngModel)]="editForm.assigned_to"
+                    name="assigned_to"
+                    class="form-select"
+                  >
+                    <option value="0">Unassigned</option>
+                    <option
+                      *ngFor="let agent of availableAgents"
+                      [value]="agent.id"
+                    >
+                      {{ agent.agent_name }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="due_date">Due Date</label>
+                  <input
+                    id="due_date"
+                    type="date"
+                    [(ngModel)]="editForm.due_date"
+                    name="due_date"
+                    class="form-input"
+                  />
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="description" class="label-with-icon">
+                    <i class="pi pi-file-text"></i>
+                    Description *
+                  </label>
+                  <textarea
+                    id="description"
+                    [(ngModel)]="editForm.description"
+                    name="description"
+                    class="form-textarea"
+                    rows="6"
+                    required
+                    placeholder="Describe the issue or request in detail"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Client Information -->
+            <div class="form-section">
+              <h3>Client Information</h3>
+              <div class="client-info-display">
+                <div class="info-row">
+                  <div class="info-item">
+                    <label>Name:</label>
+                    <span>{{ editForm.client_name || "Not provided" }}</span>
+                  </div>
+                  <div class="info-item">
+                    <label>Email:</label>
+                    <span>{{ editForm.client_email || "Not provided" }}</span>
+                  </div>
+                  <div class="info-item">
+                    <label>Phone:</label>
+                    <span>{{ editForm.client_phone || "Not provided" }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Attachments (for existing tickets) -->
+            <div class="form-section" *ngIf="ticket">
+              <h3>Attachments</h3>
+
+              <!-- Existing Attachments -->
+              <div
+                class="attachments-grid"
+                *ngIf="ticket.attachments && ticket.attachments.length > 0"
+              >
+                <div
+                  class="attachment-card"
+                  *ngFor="let attachment of ticket.attachments"
+                >
+                  <div class="attachment-icon">
+                    <i class="pi pi-file"></i>
+                  </div>
+                  <div class="attachment-details">
+                    <div class="attachment-name">{{ attachment.filename }}</div>
+                    <div class="attachment-meta">
+                      {{ (attachment.file_size / 1024).toFixed(1) }} KB •
+                      {{ formatDate(attachment.uploaded_at) }}
+                    </div>
+                  </div>
+                  <div class="attachment-actions">
+                    <button class="icon-button" title="Download">
+                      <i class="pi pi-download"></i>
+                    </button>
+                    <button
+                      class="icon-button danger"
+                      (click)="deleteAttachment(attachment.id)"
+                      title="Delete"
+                    >
+                      <i class="pi pi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Add New Attachment -->
+              <div class="add-attachment">
+                <input
+                  type="file"
+                  (change)="onFileSelected($event)"
+                  class="file-input"
+                  id="file-upload"
+                />
+                <label for="file-upload" class="attachment-upload-btn">
+                  <i class="pi pi-plus"></i>
+                  Add Attachment
+                </label>
+                <span *ngIf="selectedFile" class="selected-file-name">
+                  {{ selectedFile.name }}
+                </span>
+                <button
+                  *ngIf="selectedFile"
+                  class="action-button primary small"
+                  (click)="uploadFile()"
+                >
+                  Upload
+                </button>
+              </div>
+            </div>
+
+            <!-- Comments (for existing tickets) -->
+            <div class="form-section" *ngIf="ticket">
+              <h3>Comments & Activity</h3>
+
+              <!-- Add Comment -->
+              <div class="add-comment">
+                <div class="comment-type-toggle">
+                  <label class="toggle-label">
+                    <input
+                      type="checkbox"
+                      [(ngModel)]="newComment.is_internal"
+                    />
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-text">Internal Comment</span>
+                  </label>
+                </div>
+                <textarea
+                  [(ngModel)]="newComment.comment"
+                  placeholder="Add a comment..."
+                  class="comment-input"
+                  rows="3"
+                ></textarea>
+                <div class="comment-actions">
+                  <button
+                    class="action-button primary"
+                    (click)="addComment()"
+                    [disabled]="!newComment.comment.trim()"
+                  >
+                    Add Comment
+                  </button>
+                </div>
+              </div>
+
+              <!-- Comments List -->
+              <div class="comments-list">
+                <div class="loading-comments" *ngIf="loadingComments">
+                  Loading comments...
+                </div>
+
+                <div
+                  class="comment-card"
+                  *ngFor="let comment of comments"
+                  [class.internal]="comment.is_internal"
+                >
+                  <div class="comment-header">
+                    <div class="comment-author">
+                      <div class="author-avatar">
+                        <i class="pi pi-user"></i>
+                      </div>
+                      <div class="author-info">
+                        <div class="author-name">
+                          {{ comment.user?.name || "Unknown User" }}
+                        </div>
+                        <div class="comment-time">
+                          {{ formatDate(comment.created_at) }}
+                        </div>
+                      </div>
+                      <span class="comment-badge" *ngIf="comment.is_internal"
+                        >Internal</span
+                      >
+                    </div>
+                    <button
+                      class="icon-button danger small"
+                      (click)="deleteComment(comment.id)"
+                      title="Delete Comment"
+                    >
+                      <i class="pi pi-trash"></i>
+                    </button>
+                  </div>
+                  <div class="comment-content">
+                    {{ comment.comment }}
+                  </div>
+                </div>
+
+                <div
+                  class="no-comments"
+                  *ngIf="!loadingComments && comments.length === 0"
+                >
+                  <i class="pi pi-message"></i>
+                  <p>No comments yet. Add the first comment above.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button
+              type="button"
+              class="action-button secondary"
+              (click)="cancelEdit()"
+              [disabled]="updating"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="action-button primary"
+              [disabled]="
+                updating || !editForm.subject || !editForm.description
+              "
+            >
+              <span *ngIf="updating">Saving...</span>
+              <span *ngIf="!updating">{{
+                ticket ? "Update Ticket" : "Create Ticket"
+              }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- View Mode -->
+    <div class="view-mode" *ngIf="!editMode && ticket">
+      <!-- Ticket Header Card -->
+      <div class="ticket-header-card">
+        <div class="ticket-main-info">
+          <div class="ticket-title-section">
+            <h1 class="ticket-title">{{ ticket.subject }}</h1>
+            <div class="ticket-meta">
+              <span class="ticket-number">#{{ ticket.ticket_number }}</span>
+              <span class="ticket-date"
+                >Created {{ formatDate(ticket.created_at) }}</span
+              >
+            </div>
+          </div>
+
+          <div class="ticket-badges">
+            <div
+              class="status-badge"
+              [style.background-color]="getStatusColor(ticket.status_id)"
+            >
+              {{ getStatusName(ticket.status_id) }}
+            </div>
+            <div
+              class="priority-badge"
+              [style.background-color]="
+                getPriorityColor(ticket.priority?.name || '')
+              "
+            >
+              <i class="pi pi-flag"></i>
+              {{ ticket.priority?.name || "Unknown" }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Information Grid -->
+      <div class="info-grid">
+        <!-- Client Information -->
+        <div class="info-card">
+          <div class="card-header">
+            <i class="pi pi-user"></i>
+            <h3>Client Information</h3>
+          </div>
+          <div class="card-content">
+            <div class="info-item">
+              <label>Name</label>
+              <span>{{ ticket.client_name || "Not provided" }}</span>
+            </div>
+            <div class="info-item">
+              <label>Email</label>
+              <span>{{ ticket.client_email || "Not provided" }}</span>
+            </div>
+            <div class="info-item">
+              <label>Phone</label>
+              <span>{{ ticket.client_phone || "Not provided" }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assignment & Status -->
+        <div class="info-card">
+          <div class="card-header">
+            <i class="pi pi-users"></i>
+            <h3>Assignment & Status</h3>
+          </div>
+          <div class="card-content">
+            <div class="info-item">
+              <label>Assigned To</label>
+              <span *ngIf="ticket.assigned_user" class="assigned-user">
+                {{ ticket.assigned_user.name }}
+              </span>
+              <span *ngIf="!ticket.assigned_user" class="unassigned"
+                >Unassigned</span
+              >
+            </div>
+            <div class="info-item">
+              <label>Current Status</label>
+              <span>{{ getStatusName(ticket.status_id) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="info-card">
+          <div class="card-header">
+            <i class="pi pi-clock"></i>
+            <h3>Dates & Timeline</h3>
+          </div>
+          <div class="card-content">
+            <div class="info-item">
+              <label>Created</label>
+              <span>{{ formatDate(ticket.created_at) }}</span>
+            </div>
+            <div class="info-item">
+              <label>Last Updated</label>
+              <span>{{ formatDate(ticket.updated_at) }}</span>
+            </div>
+            <div class="info-item" *ngIf="ticket.due_date">
+              <label>Due Date</label>
+              <span>{{ formatDate(ticket.due_date) }}</span>
+            </div>
+            <div class="info-item" *ngIf="ticket.resolved_at">
+              <label>Resolved</label>
+              <span>{{ formatDate(ticket.resolved_at) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description Section -->
+      <div class="content-section">
+        <div class="section-header">
+          <i class="pi pi-file"></i>
+          <h3>Description</h3>
+        </div>
+        <div class="description-content">
+          {{ ticket.description }}
+        </div>
+      </div>
+
+      <!-- Attachments Section -->
+      <div
+        class="content-section"
+        *ngIf="ticket.attachments && ticket.attachments.length > 0"
+      >
+        <div class="section-header">
+          <i class="pi pi-paperclip"></i>
+          <h3>Attachments</h3>
+        </div>
+        <div class="attachments-grid">
+          <div
+            class="attachment-card"
+            *ngFor="let attachment of ticket.attachments"
+          >
+            <div class="attachment-icon">
+              <i class="pi pi-file"></i>
+            </div>
+            <div class="attachment-details">
+              <div class="attachment-name">{{ attachment.filename }}</div>
+              <div class="attachment-meta">
+                {{ (attachment.file_size / 1024).toFixed(1) }} KB •
+                {{ formatDate(attachment.uploaded_at) }}
+              </div>
+            </div>
+            <div class="attachment-actions">
+              <button class="icon-button" title="Download">
+                <i class="pi pi-download"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comments Section -->
+      <div class="content-section" *ngIf="comments && comments.length > 0">
+        <div class="section-header">
+          <i class="pi pi-message"></i>
+          <h3>Comments & Activity</h3>
+          <span class="comment-count">{{ comments.length }} comments</span>
+        </div>
+
+        <div class="comments-list">
+          <div
+            class="comment-card"
+            *ngFor="let comment of comments"
+            [class.internal]="comment.is_internal"
+          >
+            <div class="comment-header">
+              <div class="comment-author">
+                <div class="author-avatar">
+                  <i class="pi pi-user"></i>
+                </div>
+                <div class="author-info">
+                  <div class="author-name">
+                    {{ comment.user?.name || "Unknown User" }}
+                  </div>
+                  <div class="comment-time">
+                    {{ formatDate(comment.created_at) }}
+                  </div>
+                </div>
+                <span class="comment-badge" *ngIf="comment.is_internal"
+                  >Internal</span
+                >
+              </div>
+            </div>
+            <div class="comment-content">
+              {{ comment.comment }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

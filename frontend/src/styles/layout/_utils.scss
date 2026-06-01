@@ -1,0 +1,28 @@
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  margin-bottom: 2rem;
+  box-shadow: var(--card-shadow);
+  border-radius: $borderRadius;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+  .card-header {
+    padding: 20px 30px;
+    border-radius: 10px 10px 0px 0px;
+    background: var(--primary-color);
+    color: var(--surface-a);
+  }
+  .card-body {
+    padding: 2rem;
+  }
+}
+
+.p-toast {
+  &.p-toast-top-right,
+  &.p-toast-top-left,
+  &.p-toast-top-center {
+    top: 100px;
+  }
+}
