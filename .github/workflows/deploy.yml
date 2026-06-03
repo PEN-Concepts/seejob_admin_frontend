@@ -1,0 +1,26 @@
+name: Deploy Admin Dashboard
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          command_timeout: 30m
+          script: |
+            cd /home/ubuntu/code/seejob-Admin
+            git fetch origin main
+            git reset --hard origin/main
+            npm install
+            npm run build
+            rsync -av --delete dist/seejob-admin-frontend/ /var/www/html/frontend/dist/seejob-admin-frontend/
