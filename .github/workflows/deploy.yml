@@ -4,24 +4,64 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch: {}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          command_timeout: 30m
-          script: |
-            cd /home/ubuntu/code/seejob-Admin
-            git fetch origin main
-            git reset --hard origin/main
-            cd frontend
-            npm install
-            npm run build
-            rsync -av --delete dist/seejob-admin-frontend/ /var/www/html/frontend/dist/seejob-admin-frontend/
+          node-version: 20
+
+      # Build on the runner, not on the server (2026-10-02). The server only
+      # receives the finished files.
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci --legacy-peer-deps
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+
+      # SAFETY: abort before touching the live server if the build is empty.
+      - name: Verify build output
+        run: |
+          test -f frontend/dist/seejob-admin-frontend/index.html
+          test -f frontend/dist/seejob-admin-frontend/main.js
+          echo "Build OK: $(find frontend/dist/seejob-admin-frontend -type f | wc -l) files"
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      # The admin key is LOCKED on the server (2026-10-02), same as landing:
+      #   restrict,command="rrsync -wo /var/www/html/frontend/dist/seejob-admin-frontend"
+      # so it can only upload, only with rsync, only into the admin folder, and the
+      # rsync destination below is RELATIVE to that folder ("./").
+      # SAFETY: if the key were ever unlocked, "./" would mean the home folder and
+      # --delete would empty it. So prove the lock first — a plain shell command
+      # must be REFUSED — and stop if it runs.
+      - name: Prove the deploy key is locked to rsync
+        run: |
+          if ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new -o BatchMode=yes \
+               "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" 'echo UNLOCKED-SHELL' 2>/dev/null | grep -q UNLOCKED-SHELL; then
+            echo "::error::The admin deploy key can run a shell — it is not locked. Refusing to rsync a relative path."
+            exit 1
+          fi
+          echo "OK: a shell command was refused; the key is locked to rsync."
+
+      - name: Deploy to EC2 via rsync
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new" \
+            frontend/dist/seejob-admin-frontend/ \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:./"
